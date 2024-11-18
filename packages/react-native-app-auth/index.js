@@ -36,6 +36,8 @@ const validateClientId = clientId =>
   invariant(typeof clientId === 'string', 'Config error: clientId must be a string');
 const validateRedirectUrl = redirectUrl =>
   invariant(typeof redirectUrl === 'string', 'Config error: redirectUrl must be a string');
+const validateCallbackUrl = callbackUrl =>
+  invariant(typeof callbackUrl === 'string', 'Config error: callbackUrl must be a string');
 
 const validateHeaders = headers => {
   if (!headers) {
@@ -98,6 +100,8 @@ export const prefetchConfiguration = async ({
   warmAndPrefetchChrome = false,
   issuer,
   redirectUrl,
+  callbackUrl,
+  state,
   clientId,
   scopes,
   serviceConfiguration,
@@ -109,6 +113,7 @@ export const prefetchConfiguration = async ({
     validateIssuerOrServiceConfigurationEndpoints(issuer, serviceConfiguration);
     validateClientId(clientId);
     validateRedirectUrl(redirectUrl);
+    validateCallback(callbackUrl);
     validateHeaders(customHeaders);
     validateConnectionTimeoutSeconds(connectionTimeoutSeconds);
 
@@ -116,6 +121,8 @@ export const prefetchConfiguration = async ({
       warmAndPrefetchChrome,
       issuer,
       redirectUrl,
+      callbackUrl,
+      state,
       clientId,
       scopes,
       serviceConfiguration,
@@ -197,6 +204,8 @@ export const register = ({
 export const authorize = ({
   issuer,
   redirectUrl,
+  callbackUrl,
+  state,
   clientId,
   clientSecret,
   scopes,
@@ -218,6 +227,7 @@ export const authorize = ({
   validateIssuerOrServiceConfigurationEndpoints(issuer, serviceConfiguration);
   validateClientId(clientId);
   validateRedirectUrl(redirectUrl);
+  validateCallbackUrl(callbackUrl);
   validateHeaders(customHeaders);
   validateAdditionalHeaders(additionalHeaders);
   validateConnectionTimeoutSeconds(connectionTimeoutSeconds);
@@ -226,6 +236,8 @@ export const authorize = ({
   const nativeMethodArguments = [
     issuer,
     redirectUrl,
+    callbackUrl,
+    state,
     clientId,
     clientSecret,
     scopes,
@@ -260,6 +272,8 @@ export const refresh = (
   {
     issuer,
     redirectUrl,
+    callbackUrl,
+    state,
     clientId,
     clientSecret,
     scopes,
@@ -278,6 +292,7 @@ export const refresh = (
   validateIssuerOrServiceConfigurationEndpoints(issuer, serviceConfiguration);
   validateClientId(clientId);
   validateRedirectUrl(redirectUrl);
+  validateCallbackUrl(callbackUrl);
   validateHeaders(customHeaders);
   validateAdditionalHeaders(additionalHeaders);
   validateConnectionTimeoutSeconds(connectionTimeoutSeconds);
@@ -287,6 +302,7 @@ export const refresh = (
   const nativeMethodArguments = [
     issuer,
     redirectUrl,
+    state,
     clientId,
     clientSecret,
     refreshToken,

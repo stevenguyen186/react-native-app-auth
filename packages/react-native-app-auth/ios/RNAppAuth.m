@@ -89,6 +89,8 @@ RCT_REMAP_METHOD(register,
 RCT_REMAP_METHOD(authorize,
                  issuer: (NSString *) issuer
                  redirectUrl: (NSString *) redirectUrl
+                 callbackUrl: (NSString *) callbackUrl
+                 state: (NSString *) state
                  clientId: (NSString *) clientId
                  clientSecret: (NSString *) clientSecret
                  scopes: (NSArray *) scopes
@@ -111,6 +113,8 @@ RCT_REMAP_METHOD(authorize,
         OIDServiceConfiguration *configuration = [self createServiceConfiguration:serviceConfiguration];
         [self authorizeWithConfiguration: configuration
                              redirectUrl: redirectUrl
+                             callbackUrl: callbackUrl
+                                   state: state
                                 clientId: clientId
                             clientSecret: clientSecret
                                   scopes: scopes
@@ -132,6 +136,8 @@ RCT_REMAP_METHOD(authorize,
                                                                 [self authorizeWithConfiguration: configuration
                                                                  
                                                                                      redirectUrl: redirectUrl
+                                                                                     callbackUrl: callbackUrl
+                                                                                           state: state
                                                                                         clientId: clientId
                                                                                     clientSecret: clientSecret
                                                                                           scopes: scopes
@@ -150,6 +156,8 @@ RCT_REMAP_METHOD(authorize,
 RCT_REMAP_METHOD(refresh,
                  issuer: (NSString *) issuer
                  redirectUrl: (NSString *) redirectUrl
+                 callbackUrl: (NSString *) callbackUrl
+                 state: (NSString *) state
                  clientId: (NSString *) clientId
                  clientSecret: (NSString *) clientSecret
                  refreshToken: (NSString *) refreshToken
@@ -169,6 +177,8 @@ RCT_REMAP_METHOD(refresh,
         OIDServiceConfiguration *configuration = [self createServiceConfiguration:serviceConfiguration];
         [self refreshWithConfiguration: configuration
                            redirectUrl: redirectUrl
+                           callbackUrl: callbackUrl
+                                 state: state
                               clientId: clientId
                           clientSecret: clientSecret
                           refreshToken: refreshToken
@@ -186,6 +196,8 @@ RCT_REMAP_METHOD(refresh,
                                                                 }
                                                                 [self refreshWithConfiguration: configuration
                                                                                    redirectUrl: redirectUrl
+                                                                                   callbackUrl: callbackUrl
+                                                                                         state: state
                                                                                       clientId: clientId
                                                                                   clientSecret: clientSecret
                                                                                   refreshToken: refreshToken
@@ -322,6 +334,8 @@ RCT_REMAP_METHOD(logout,
  */
 - (void)authorizeWithConfiguration: (OIDServiceConfiguration *) configuration
                        redirectUrl: (NSString *) redirectUrl
+                       callbackUrl: (NSString *) callbackUrl
+                             state: (NSString *) state
                           clientId: (NSString *) clientId
                       clientSecret: (NSString *) clientSecret
                             scopes: (NSArray *) scopes
@@ -338,6 +352,7 @@ RCT_REMAP_METHOD(logout,
     NSString *codeVerifier = usePKCE ? [[self class] generateCodeVerifier] : nil;
     NSString *codeChallenge = usePKCE ? [[self class] codeChallengeS256ForVerifier:codeVerifier] : nil;
     NSString *nonce =  useNonce ? additionalParameters[@"nonce"]? additionalParameters[@"nonce"]:  [[self class] generateState] : nil ;
+    state = state ?: [[self class] generateState];
 
     // builds authentication request
     OIDAuthorizationRequest *request =
@@ -347,8 +362,9 @@ RCT_REMAP_METHOD(logout,
                                               clientSecret:clientSecret
                                                      scope:[OIDScopeUtilities scopesWithArray:scopes]
                                                redirectURL:[NSURL URLWithString:redirectUrl]
+                                               callbackURL:[NSURL URLWithString:callbackUrl]
                                               responseType:OIDResponseTypeCode
-                                                     state: additionalParameters[@"state"] ? additionalParameters[@"state"] : [[self class] generateState]
+                                                     state:state
                                                      nonce:nonce
                                               codeVerifier:codeVerifier
                                              codeChallenge:codeChallenge
@@ -452,6 +468,8 @@ RCT_REMAP_METHOD(logout,
  */
 - (void)refreshWithConfiguration: (OIDServiceConfiguration *)configuration
                      redirectUrl: (NSString *) redirectUrl
+                     callbackUrl: (NSString *) callbackUrl
+                           state: (NSString *) state
                         clientId: (NSString *) clientId
                     clientSecret: (NSString *) clientSecret
                     refreshToken: (NSString *) refreshToken

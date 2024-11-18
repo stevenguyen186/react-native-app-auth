@@ -69,6 +69,8 @@ export type AuthConfiguration = BaseAuthConfiguration & {
   clientSecret?: string;
   scopes: string[];
   redirectUrl: string;
+  callbackUrl?: string;
+  state?: string;
   additionalParameters?: BuiltInParameters & { [name: string]: string };
   clientAuthMethod?: 'basic' | 'post';
   dangerouslyAllowInsecureHttpRequests?: boolean;
